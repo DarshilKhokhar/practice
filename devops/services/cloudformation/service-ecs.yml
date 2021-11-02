@@ -1,0 +1,150 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sets Up Service Api
+Parameters:
+  ClusterName:
+    Default: takein
+    Type: String
+  Stage:
+    Default: prod
+    Type: String
+  TypeProject:
+    Default: itcan
+    Type: String
+  ContainerPort:
+    Default: 3000
+    Type: Number
+  ContainerVirtualCPUs:
+    Default: 512
+    Type: Number
+  ContainerMemoryMin:
+    Default: 256
+    Type: Number
+  ContainerMemoryMax:
+    Type: String
+    Default: LIMITLESS
+  AlbHealthCheckStartPeriod:
+    Type: String
+    Default: 5
+  ContainerNetworkMode:
+    Type: String
+    Default: bridge
+  BuildNumber:
+    Type: String
+    Default: latest
+  SchedulingStrategy:
+    Default: REPLICA
+    Type: String
+  EcsTasksNumber:
+    Type: String
+    Default: 1
+  NginxContainerPort:
+    Type: Number
+    Default: 80
+Conditions:
+  containerHasMemoryLimit: !Not 
+    - !Equals 
+      - !Ref ContainerMemoryMax
+      - LIMITLESS
+  hasOnlyOneTask: !Equals 
+    - !Ref EcsTasksNumber
+    - '1'
+Resources:
+  serviceECSService:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      ServiceName: !Sub '${ClusterName}-${Stage}-${TypeProject}'
+      SchedulingStrategy: !Ref SchedulingStrategy
+      Cluster: !ImportValue 
+        'Fn::Sub': '${ClusterName}-${Stage}-ECSCluster'
+      Role: !ImportValue 
+        'Fn::Sub': '${ClusterName}-${Stage}-ECSRoleArn'
+      TaskDefinition: !Ref servicetaskdefinition
+      DesiredCount: !Ref EcsTasksNumber
+      DeploymentConfiguration:
+        MinimumHealthyPercent: !If 
+          - hasOnlyOneTask
+          - 100
+          - 50
+        MaximumPercent: !If 
+          - hasOnlyOneTask
+          - 200
+          - 100
+      LoadBalancers:
+        - ContainerName: !Sub nginx__${Stage}__${ClusterName}
+          ContainerPort: !Ref NginxContainerPort
+          TargetGroupArn: !ImportValue 
+            'Fn::Sub': '${ClusterName}-${TypeProject}-${Stage}-web-tg'
+      HealthCheckGracePeriodSeconds: !Ref AlbHealthCheckStartPeriod
+      PlacementConstraints:
+        - Type: distinctInstance
+  servicetaskdefinition:
+    Type: 'AWS::ECS::TaskDefinition'
+    Properties:
+      Family: !Sub '${ClusterName}'
+      NetworkMode: !Ref ContainerNetworkMode
+      ContainerDefinitions:
+        - Name: !Sub 'Application__${ClusterName}_${Stage}_${TypeProject}'
+          Image: !Sub >-
+            ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ClusterName}-${Stage}-${TypeProject}:${BuildNumber}
+          Command:
+            - bash
+            - '-c'
+            - 'npm start'
+          Essential: true
+          MemoryReservation: !Ref ContainerMemoryMin
+          Memory: !If 
+            - containerHasMemoryLimit
+            - !Ref ContainerMemoryMax
+            - !Ref 'AWS::NoValue'
+          Cpu: !Ref ContainerVirtualCPUs
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Sub '/ecs-cluster/${ClusterName}-${Stage}'
+              awslogs-stream-prefix: /ecs-task-output
+              awslogs-region: !Ref 'AWS::Region'
+          Environment:
+            - Name: DEBUG
+              Value: 'express,takein:*'
+            - Name: AWS_REGION 
+              Value: !Sub ${AWS::Region}
+            - Name: MONGO_POOL_SIZE
+              Value: 5
+            - Name: PORT
+              Value: 3000
+            - Name: MONGO_URL
+              Value: !Sub >-
+                mongodb://{{resolve:ssm:/ECS-CLUSTER/${Stage}/DOCUMENT-DB-USERNAME}}:{{resolve:ssm:/ECS-CLUSTER/${Stage}/DOCUMENT-DB-PASSWORD}}@{{resolve:ssm:/ECS-CLUSTER/${Stage}/DOCUMENT-DB-ADDRESS}}:{{resolve:ssm:/ECS-CLUSTER/${Stage}/DOCUMENT-DB-PORT}}/{{resolve:ssm:/ECS-CLUSTER/${Stage}/DOCUMENT-DB-DATABASE-NAME}}
+        - Name: !Sub nginx__${Stage}__${ClusterName}
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ClusterName}-nginx:latest
+          PortMappings:
+            - HostPort: 0
+              ContainerPort: !Ref NginxContainerPort
+          Links:
+            - !Sub 'Application__${ClusterName}_${Stage}_${TypeProject}'
+          Essential: true
+          MemoryReservation: 128
+          Cpu: 256
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Sub /ecs-cluster/${ClusterName}-${Stage}
+              awslogs-stream-prefix: /ecs-task-output
+              awslogs-region: !Ref AWS::Region
+          Ulimits:
+            - HardLimit: 90000
+              Name: nofile
+              SoftLimit: 90000
+          Command:
+            - "sh"
+            - "-c"
+            - "/app/nginx-config.sh && nginx -g 'daemon off;'"
+          Environment:
+            - Name: APP_PORT
+              Value: !Ref ContainerPort
+            - Name: CONTAINER_PORT
+              Value: !Ref NginxContainerPort
+            - Name: SERVER_APP_NAME
+              Value: !Sub 'Application__${ClusterName}_${Stage}_${TypeProject}'
+            - Name: APP_DOMAIN
+              Value: ''

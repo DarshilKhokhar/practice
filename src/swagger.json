@@ -1,0 +1,2947 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "TakeIn Resturant",
+    "description": "A Food Delivering App"
+  },
+  "servers": [
+    {
+      "url": "http://takein-prod-public-alb-373215541.ap-southeast-1.elb.amazonaws.com/api/v1"
+    },
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [{
+    "bearerAuth": []
+  }],
+  "paths": {
+    "/user/send/otp": {
+      "post": {
+        "tags": ["OTP & SIGNUP SCREEN"],
+        "summary": "Sending OTP to Mobile Number",
+        "requestBody": {
+          "description": "OTP Send Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/OTP_SEND"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OTP sent successfully!",
+            "schema": {
+              "$ref": "#/definitions/OTP_SEND"
+            }
+          },
+          "400": {
+            "description": "There is some error while sending the OTP."
+          }
+        }
+      }
+    },
+    "/user/verify/otp": {
+      "post": {
+        "tags": ["OTP & SIGNUP SCREEN"],
+        "summary": "Verifying OTP",
+        "requestBody": {
+          "description": "OTP Verify Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/OTP_VERIFY"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OTP Verified successfully!",
+            "schema": {
+              "$ref": "#/definitions/OTP_VERIFY"
+            }
+          },
+          "400": {
+            "description": "There is some error while verifying the OTP."
+          }
+        }
+      }
+    },
+    "/user/resend/otp": {
+      "post": {
+        "tags": ["OTP & SIGNUP SCREEN"],
+        "summary": "Resending OTP",
+        "requestBody": {
+          "description": "OTP Resend Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/OTP_RESEND"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OTP Resent successfully!",
+            "schema": {
+              "$ref": "#/definitions/OTP_RESEND"
+            }
+          },
+          "400": {
+            "description": "There is some error while sending the OTP."
+          }
+        }
+      }
+    },
+    "/user/sign-up": {
+      "post": {
+        "tags": ["OTP & SIGNUP SCREEN"],
+        "summary": "User Sign Up",
+        "requestBody": {
+          "description": "User Sign Up form",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/USER_SIGNUP"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully completed sign up!",
+            "schema": {
+              "$ref": "#/definitions/USER_SIGNUP"
+            }
+          },
+          "400": {
+            "description": "Please provide data for all the required field to proceed sign up."
+          }
+        }
+      }
+    },
+    "/cookie-maker/sign-up":{
+      "post": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Sign Up For Cookie Marker",
+        "requestBody": {
+          "description": "Sign Up Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/COOKIE_MAKER_SIGNUP"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully completed Sign up",
+            "schema": {
+              "$ref": "#/definitions/COOKIE_MAKER_SIGNUP"
+            }
+          },
+          "400": {
+            "description": "There is some error while Sign up. Please try again"
+          }
+        }
+      }
+    },
+    "/cookie-maker/login": {
+      "post": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Sign-In For Cookie Marker",
+        "requestBody": {
+          "description": "Sign In Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/COOKIE_MAKER_SIGNIN"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully Sign In",
+            "schema": {
+              "$ref": "#/definitions/COOKIE_MAKER_SIGNIN"
+            }
+          },
+          "400": {
+            "description": "There is some error while Sign In. Please try again"
+          }
+        }
+      }
+    },
+    "/cookie-maker/users": {
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "List of Admin Users",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Admin User List.",
+            "schema": {
+              "$ref": "#/definitions/FOOD_TYPE"
+            }
+          },
+          "400": {
+            "description": "Error in fetching Admin User List"
+          }
+        }
+      }
+    },
+    "/cookie-maker/changePassword/users/{id}":{
+      "put": {
+        "summary": "Updated Cookie Marker Password",
+        "tags": ["COOKIE_MAKER"],
+        "requestBody": {
+          "description": "Cookie Marker Change Password Data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/COOKIE_MAKER_CHANGE_PASSWORD"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Cookie Marker with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated Cookie Marker Password data.",
+            "schema": {
+              "$ref": "#/definitions/COOKIE_MAKER"
+            }
+          },
+          "400": {
+            "description": "Failed to update Cookie Marker Password."
+          },
+          "404": {
+            "description": "Failed. Cookie Marker Account not found."
+          }
+        }
+      }
+    },
+    "/cookie-maker/users/{id}": {
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "To Get Details for Specific Admin User",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Cookie Marker Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Cookie Marker data based on provided Value.",
+            "schema": {
+              "$ref": "#/definitions/COOKIE_MAKER"
+            }
+          },
+          "404": {
+            "description": "Error in fetching Cookie Marker data."
+          }
+        }
+      },
+
+      
+
+      "put": {
+        "summary": "Updated Cookie Marker Account Data",
+        "tags": ["COOKIE_MAKER"],
+        "requestBody": {
+          "description": "Cookie Marker Data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/COOKIE_MAKER_SIGNUP"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Cookie Marker with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated Cookie Marker Account data.",
+            "schema": {
+              "$ref": "#/definitions/COOKIE_MAKER"
+            }
+          },
+          "400": {
+            "description": "Failed to update Cookie Marker data."
+          },
+          "404": {
+            "description": "Failed. Cookie Marker Account not found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Admin User",
+        "tags": ["COOKIE_MAKER"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Cookie Marker Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted Admin User.",
+            "schema": {
+              "$ref": "#/definitions/COOKIE_MAKER"
+            }
+          },
+          "400": {
+            "description": "Failed to Delete Admin User."
+          },
+          "404": {
+            "description": "Failed. Cookie Marker Id not found."
+          }
+        }
+      }
+    },
+    "/meal-type": {
+      "post": {
+        "tags": ["MEAL_TYPE"],
+        "summary": "Adding Meal Type",
+        "requestBody": {
+          "description": "Meal Type Preference Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/MEAL_TYPE"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Your Meal Type successfully saved!",
+            "schema": {
+              "$ref": "#/definitions/MEAL_TYPE"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving Meal Type Preference."
+          }
+        }
+      },
+      "get": {
+        "tags": ["MEAL_TYPE"],
+        "summary": "Fetching Meal Type",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Meal Typa data.",
+            "schema": {
+              "$ref": "#/definitions/MEAL_TYPE"
+            }
+          },
+          "400": {
+            "description": "Error in fetching Meal Type"
+          }
+        }
+      }
+    },
+    "/meal-type/{id}": {
+      "delete": {
+        "summary": "Delete Meal type",
+        "tags": ["MEAL_TYPE"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Meal Type Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted Meal Type.",
+            "schema": {
+              "$ref": "#/definitions/MEAL_TYPE"
+            }
+          },
+          "400": {
+            "description": "Failed to Delete Meal Type."
+          },
+          "404": {
+            "description": "Failed. Meal Type Id not found."
+          }
+        }
+      }
+    },
+    "/food-type": {
+      "post": {
+        "tags": ["FOOD_TYPE"],
+        "summary": "Adding Food Type",
+        "requestBody": {
+          "description": "Food Type Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/FOOD_TYPE"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Your Food Type successfully saved!",
+            "schema": {
+              "$ref": "#/definitions/FOOD_TYPE"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving Food Type."
+          }
+        }
+      },
+      "get": {
+        "tags": ["FOOD_TYPE"],
+        "summary": "Fetching Food Type",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Food Typa data.",
+            "schema": {
+              "$ref": "#/definitions/FOOD_TYPE"
+            }
+          },
+          "400": {
+            "description": "Error in fetching food Type"
+          }
+        }
+      }
+    },
+    "/food-type/{id}": {
+      "delete": {
+        "summary": "Delete Menu food type",
+        "tags": ["FOOD_TYPE"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Food Type Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted Food Type.",
+            "schema": {
+              "$ref": "#/definitions/FOOD_TYPE"
+            }
+          },
+          "400": {
+            "description": "Failed to Delete Food Type."
+          },
+          "404": {
+            "description": "Failed. Food Type Id not found."
+          }
+        }
+      }
+    },
+    "/cookie-maker/restaurant": {
+      "post": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Adding Restaurant Details",
+        "requestBody": {
+          "description": "Restaurant data Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/RESTAURANT"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully saved your restaurant!",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving restaurant."
+          }
+        }
+      },
+      "put": {
+        "summary": "Updated Restaurant with given ID",
+        "tags": ["COOKIE_MAKER"],
+        "requestBody": {
+          "description": "Restaurant Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/RESTAURANT"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated restaurant data.",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "400": {
+            "description": "Failed to update Restaurant data."
+          },
+          "404": {
+            "description": "Failed. Restaurant not found."
+          }
+        }
+      }
+    },
+    "/restaurant": {
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "Fetching restaurant data.",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched restaurant data.",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "400": {
+            "description": "Error in fetching restaurant"
+          }
+        }
+      }
+    },
+
+    "/restaurant/sort?OrderBy={OrderBy}":{
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "To Filter Restaurants based on Search Keyword",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "OrderBy",
+            "required": true,
+            "description": "OrderBy",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        
+        "responses": {
+          "200": {
+            "description": "Fetched Restaurant data based on Search Keyword",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "404": {
+            "description": "Error in fetching Restaurant data based on Search Keyword"
+          }
+        }
+      }
+    },
+
+    
+    "/restaurant/filter?FD={FD}&minOrder={minOrder}&new={new}&open={open}": {
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "Fetching restaurant data in filter.",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "FD",
+            "required": false,
+            "description": "free-delivery",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          },
+          {
+            "in": "path",
+            "name": "minOrder",
+            "required": false,
+            "description": "no-minimum-order-amount",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          },
+          {
+            "in": "path",
+            "name": "new",
+            "required": false,
+            "description": "newly-added",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          },
+          {
+            "in": "path",
+            "name": "open",
+            "required": false,
+            "description": "open-now",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched restaurant data .",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "400": {
+            "description": "Error in fetching restaurant"
+          }
+        }
+      }
+    },
+
+    "/cookie-maker/restaurant/offers": {
+      "post": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Adding Offer Details",
+        "requestBody": {
+          "description": "Restaurant Offer Data Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/RESTAURANT_OFFERS"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully saved Offers!",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving offer."
+          }
+        }
+      },
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Fetching Offer Details",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Offers.",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "400": {
+            "description": "Error in fetching Offers"
+          }
+        }
+      }
+    },
+    "/cookie-maker/restaurant/offers/{id}": {
+      "put": {
+        "summary": "Update Offer",
+        "tags": ["COOKIE_MAKER"],
+        "requestBody": {
+          "description": "Restaurant Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "example": "Accepted"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Offer Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated offer status"
+          },
+          "400": {
+            "description": "Failed to update offer status"
+          },
+          "404": {
+            "description": "Failed. offer not found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete offer",
+        "tags": ["COOKIE_MAKER"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Offer Id.",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted offer"
+          },
+          "400": {
+            "description": "Failed to Delete offer"
+          },
+          "404": {
+            "description": "Failed. offer Not found"
+          }
+        }
+      }
+    },
+    "/restaurant?isActive={id}": {
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "To Get Active/Inactive Restaurant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Restaurant with id (Ex: for Active pass - 1 & Inactive pass - 0)",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Restaurant data based on provided Value.",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "404": {
+            "description": "Error in fetching Restaurant data."
+          }
+        }
+      }
+    },
+    "/restaurant?long={long}&latt={latt}": {
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "To Get Restaurants Near By Me.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "long",
+            "required": true,
+            "description": "Longitude",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          },
+          {
+            "in": "path",
+            "name": "latt",
+            "required": true,
+            "description": "Latitude",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Restaurant Near By Me.",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "404": {
+            "description": "Error in fetching Restaurant List."
+          }
+        }
+      }
+    },
+    "/restaurant?mealTypeId={id}": {
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "To Filter Restaurants based on Meal Type.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Pass the Meal Type Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Restaurant data based on selected Meal Type",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "404": {
+            "description": "Error in fetching Restaurant data based on selected meal type.."
+          }
+        }
+      }
+    },
+    "/restaurant?search={keyword}": {
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "To Filter Restaurants based on Search Keyword",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "keyword",
+            "required": true,
+            "description": "Keyword",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Restaurant data based on Search Keyword",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "404": {
+            "description": "Error in fetching Restaurant data based on Search Keyword"
+          }
+        }
+      }
+    },
+    "/restaurant/{id}": {
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "Get Particluar Restaurant Data.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Restaurant with id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched single Restaurant data.",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "404": {
+            "description": "Error in fetching single Restaurant data."
+          }
+        }
+      }
+    },
+    "/restaurant/{id}/delivery-time": {
+      "get": {
+        "tags": ["RESTAURANT"],
+        "summary": "Get Estimate Delivery Time for Particluar Restaurant.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Restaurant with id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Estimate Delivery Time for Restaurant.",
+            "schema": {
+              "$ref": "#/definitions/RESTAURANT"
+            }
+          },
+          "404": {
+            "description": "Error in fetching Estimate Delivery Time for Restaurant."
+          }
+        }
+      }
+    },
+    "/cookie-maker/menu/category": {
+      "post": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Adding Menu Category List",
+        "requestBody": {
+          "description": "Menu Category List Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/MENU_CATEGORY"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "CREATED_MENU_CAREGORY",
+            "schema": {
+              "$ref": "#/definitions/MENU_CATEGORY"
+            }
+          },
+          "400": {
+            "description": "CREATE_MENU_CATEGORY_ERROR"
+          }
+        }
+      },
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Get Menu Category for Particluar Restaurant.",
+        "responses": {
+          "200": {
+            "description": "Fetched single Restaurant Menu Category.",
+            "schema": {
+              "$ref": "#/definitions/MENU_CATEGORY"
+            }
+          },
+          "404": {
+            "description": "Error in fetching single Restaurant Menu Category List."
+          }
+        }
+      }
+    },
+    "/cookie-maker/menu/category/{id}": {
+      "delete": {
+        "summary": "Delete Menu Category List for given Restaurant ID",
+        "tags": ["COOKIE_MAKER"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Menu category Id.",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted Menu Category.",
+            "schema": {
+              "$ref": "#/definitions/MENU_CATEGORY"
+            }
+          },
+          "400": {
+            "description": "Failed to Delete Menu Category."
+          },
+          "404": {
+            "description": "Failed. Menu Category Id not found."
+          }
+        }
+      }
+    },
+    "/cookie-maker/menu/item?menuCategoryId={menuCategoryId}": {
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Get Menu Item with Menucategory.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "menuCategoryId",
+            "required": true,
+            "description": "Menu Category id",
+            "schema": {
+              "$ref": "#/definitions/menuCategoryId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched single Restaurant Menu Item.",
+            "schema": {
+              "$ref": "#/definitions/MENU_ITEM"
+            }
+          },
+          "404": {
+            "description": "Error in fetching single Restaurant Menu Item List."
+          }
+        }
+      }
+    },
+    "/cookie-maker/menu/item/{id}": {
+      "put": {
+        "summary": "Update Menu Item Item",
+        "tags": ["COOKIE_MAKER"],
+        "requestBody": {
+          "description": "Menu Item Update Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/MENU_ITEM"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Menu Item Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated Menu Item",
+            "schema": {
+              "$ref": "#/definitions/MENU_ITEM"
+            }
+          },
+          "400": {
+            "description": "Failed to Menu Item."
+          },
+          "404": {
+            "description": "Failed. Not Found Menu Item Id"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Menu Item List for given Restaurant ID",
+        "tags": ["COOKIE_MAKER"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Menu Item Id.",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted Menu Item.",
+            "schema": {
+              "$ref": "#/definitions/MENU_ITEM"
+            }
+          },
+          "400": {
+            "description": "Failed to Delete Menu Item."
+          },
+          "404": {
+            "description": "Failed. Menu Item Id not found."
+          }
+        }
+      }
+    },
+    "/cookie-maker/menu/item": {
+      "post": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Adding Menu Item",
+        "requestBody": {
+          "description": "Menu Item List Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/MENU_ITEM"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "CREATED_MENU_ITEM",
+            "schema": {
+              "$ref": "#/definitions/MENU_ITEM"
+            }
+          },
+          "400": {
+            "description": "CREATE_MENU_ITEM_ERROR"
+          }
+        }
+      }
+    },
+    "/cookie-maker/menu/item/popular":{
+      "get":{
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Fetching Notifications",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Best Buying Items."
+          },
+          "400": {
+            "description": "Error in fetching Best Buying Items"
+          }
+        }
+      }
+    },
+    "/cookie-maker/notification": {
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Fetching Notifications",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Notifications."
+          },
+          "400": {
+            "description": "Error in fetching Notifications"
+          }
+        }
+      }
+    },
+    "/menu/category?restaurantId={id}": {
+      "get": {
+          "tags": [
+              "MENU_CATEGORY"
+          ],
+          "summary": "Get Menu Category for Particluar Restaurant.",
+          "parameters": [
+              {
+                  "in": "path",
+                  "name": "id",
+                  "required": true,
+                  "description": "Restaurant id",
+                  "schema": {
+                      "$ref": "#/definitions/id"
+                  }
+              }
+          ],
+          "responses": {
+              "200": {
+                  "description": "Fetched single Restaurant Menu Category.",
+                  "schema": {
+                      "$ref": "#/definitions/MENU_CATEGORY"
+                  }
+              },
+              "404": {
+                  "description": "Error in fetching single Restaurant Menu Category List."
+              }
+          }
+      }
+  },
+    "/menu/item?restaurantId={restaurantId}": {
+      "get": {
+        "tags": ["MENU_ITEM"],
+        "summary": "Get Menu Item for Particluar Restaurant.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "description": "Restaurant id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched single Restaurant Menu Item.",
+            "schema": {
+              "$ref": "#/definitions/MENU_ITEM"
+            }
+          },
+          "404": {
+            "description": "Error in fetching single Restaurant Menu Item List."
+          }
+        }
+      }
+    },
+    "/menu/item?restaurantId={restaurantId}&menuCategoryId={menuCategoryId}": {
+      "get": {
+        "tags": ["MENU_ITEM"],
+        "summary": "Get Menu Item for Particluar Restaurant with Menucategory.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "description": "Restaurant id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          },
+          {
+            "in": "path",
+            "name": "menuCategoryId",
+            "required": true,
+            "description": "Menu Category id",
+            "schema": {
+              "$ref": "#/definitions/menuCategoryId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched single Restaurant Menu Item.",
+            "schema": {
+              "$ref": "#/definitions/MENU_ITEM"
+            }
+          },
+          "404": {
+            "description": "Error in fetching single Restaurant Menu Item List."
+          }
+        }
+      }
+    },
+    "/menu/item?restaurantId={restaurantId}&search={keyword}": {
+      "get": {
+        "tags": ["MENU_ITEM"],
+        "summary": "Get Menu Item for Particluar Restaurant.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "restaurantId",
+            "required": true,
+            "description": "Restaurant id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          },
+          {
+            "in": "path",
+            "name": "keyword",
+            "required": true,
+            "description": "Keyword",
+            "schema": {
+              "$ref": "#/definitions/menuCategoryId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched single Restaurant Menu Item.",
+            "schema": {
+              "$ref": "#/definitions/MENU_ITEM"
+            }
+          },
+          "404": {
+            "description": "Error in fetching single Restaurant Menu Item List."
+          }
+        }
+      }
+    },
+    "/menu/item/{id}": {
+      "get": {
+        "tags": ["MENU_ITEM"],
+        "summary": "To get details of Particular food item.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Food Item id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Details of single menu item.",
+            "schema": {
+              "$ref": "#/definitions/MENU_ITEM"
+            }
+          },
+          "404": {
+            "description": "Error in fetching Details of single menu item."
+          }
+        }
+      }
+    },
+    "/contact-us": {
+      "post": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Contact Us Form",
+        "requestBody": {
+          "description": "Contact Us Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/CONTACT_US"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully saved contact us details.",
+            "schema": {
+              "$ref": "#/definitions/CONTACT_US"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving contact us details."
+          }
+        }
+      },
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Fetching Contact Us Data",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched contact us data.",
+            "schema": {
+              "$ref": "#/definitions/CONTACT_US"
+            }
+          },
+          "400": {
+            "description": "Error in fetching contact us data."
+          }
+        }
+      }
+    },
+    "/favourite/restaurant": {
+      "post": {
+        "tags": ["FAVOURITE_RESTAURANT"],
+        "summary": "Adding Restaurant in Favourite List",
+        "requestBody": {
+          "description": "Favourite Restaurant Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/FAVOURITE_RESTAURANT"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "RESTAURANT_ADDED_INTO_FAVOURITE_LIST",
+            "schema": {
+              "$ref": "#/definitions/FAVOURITE_RESTAURANT"
+            }
+          },
+          "400": {
+            "description": "ADD_FAVOURITE_ERROR"
+          }
+        }
+      },
+      "get": {
+        "tags": ["FAVOURITE_RESTAURANT"],
+        "summary": "To fetch list of favourite Restaurants per user.",
+        "responses": {
+          "200": {
+            "description": "FAVOURITED_RESTAURANT_LIST",
+            "schema": {
+              "$ref": "#/definitions/FAVOURITE_RESTAURANT"
+            }
+          },
+          "404": {
+            "description": "Error!"
+          }
+        }
+      }
+    },
+    "/favourite/restaurant/{id}": {
+      "delete": {
+        "summary": "Unfavorite Restaurant",
+        "tags": ["FAVOURITE_RESTAURANT"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Particular Favourite Restaurant Detail Id.",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "REMOVED_FROM_FAVOURITE_LIST",
+            "schema": {
+              "$ref": "#/definitions/FAVOURITE_RESTAURANT"
+            }
+          },
+          "400": {
+            "description": "ERROR!"
+          },
+          "404": {
+            "description": "Failed. RESTAURANT_NOT_FOUND"
+          }
+        }
+      }
+    },
+    "/review": {
+      "post": {
+        "tags": ["REVIEW"],
+        "summary": "Adding Review",
+        "requestBody": {
+          "description": "Review Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/REVIEW"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Your Review successfully added.",
+            "schema": {
+              "$ref": "#/definitions/REVIEW"
+            }
+          },
+          "400": {
+            "description": "There is some error while adding your Review."
+          }
+        }
+      }
+    },
+    "/cookie-maker/review": {
+      "get": {
+        "tags": ["REVIEW"],
+          "summary": "Fetching Reviews",
+          "produces": ["application/json"],
+          "consumes": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "You have successfully fetched Reviews."
+            },
+            "400": {
+              "description": "Error in fetching cart details"
+            }
+          }
+        }
+    },
+    "/cart": {
+      "post": {
+        "tags": ["CART"],
+        "summary": "Adding Menu Item into cart",
+        "requestBody": {
+          "description": "Menu Item Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/REVIEW"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Your Menu Item successfully added into cart.",
+            "schema": {
+              "$ref": "#/definitions/CART"
+            }
+          },
+          "400": {
+            "description": "There is some error while adding your menu item into cart."
+          }
+        }
+      },
+      "get": {
+      "tags": ["CART"],
+        "summary": "Fetching Cart Details",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched cart Details.",
+            "schema": {
+              "$ref": "#/definitions/CART"
+            }
+          },
+          "400": {
+            "description": "Error in fetching cart details"
+          }
+        }
+      }
+    },
+    "/cart/checkout": {
+      "get": {
+        "tags": ["CART"],
+        "summary": "Cart Checkout Page",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully checkout page",
+            "schema": {
+              "$ref": "#/definitions/CART"
+            }
+          },
+          "400": {
+            "description": "Error in fetching checkout page details."
+          }
+        }
+      }
+    },
+    "/cart/item/{id}": {
+      "put": {
+        "summary": "Update Cart Item",
+        "tags": ["CART"],
+        "requestBody": {
+          "description": "Cart Update Item Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/CART_UPDATE"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Cart Item Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated Menu Item with Cart Data.",
+            "schema": {
+              "$ref": "#/definitions/CART"
+            }
+          },
+          "400": {
+            "description": "Failed to Menu Item with Cart Data."
+          },
+          "404": {
+            "description": "Failed. Cart Item Id Not Found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove Menu Item from Cart",
+        "tags": ["CART"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Cart Item Id.",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Removed Menu Item from Cart.",
+            "schema": {
+              "$ref": "#/definitions/CART"
+            }
+          },
+          "400": {
+            "description": "Failed to Remove Menu Item from cart."
+          },
+          "404": {
+            "description": "Failed. Cart Item Id not found."
+          }
+        }
+      }
+    },
+    "/cart/order-again":{
+      "post": {
+        "tags": ["CART"],
+        "summary": "Adding Menu Item into cart",
+        "requestBody": {
+          "description": "Order Again Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/ORDER_AGAIN"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Your Menu Item successfully added into cart.",
+            "schema": {
+              "$ref": "#/definitions/CART"
+            }
+          },
+          "400": {
+            "description": "There is some error while adding your menu item into cart."
+          }
+        }
+      }
+    },
+    "/order": {
+      "post": {
+        "tags": ["ORDER"],
+        "summary": "Order",
+        "requestBody": {
+          "description": "Order Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/ORDER"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Your order successfully placed!",
+            "schema": {
+              "$ref": "#/definitions/ORDER"
+            }
+          },
+          "400": {
+            "description": "There is some error while placing order!."
+          }
+        }
+      },
+      "get": {
+        "tags": ["ORDER"],
+        "summary": "Fetching Previous Orders",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched previous orders.",
+            "schema": {
+              "$ref": "#/definitions/ORDER"
+            }
+          },
+          "400": {
+            "description": "Error in fetching previous orders."
+          }
+        }
+      }
+    },
+    "/cookie-maker/order/{id}": {
+      "put": {
+        "summary": "Update Order Status",
+        "tags": ["COOKIE_MAKER"],
+        "requestBody": {
+          "description": "Order Status Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "orderStatus": {
+                    "type": "string",
+                    "example": "Accepted"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Order Object Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated Order Status"
+          },
+          "400": {
+            "description": "Failed to update order status"
+          },
+          "404": {
+            "description": "Failed. Order Id not found"
+          }
+        }
+      },
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "To get Order details.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Order Project id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched Order Details"
+          },
+          "404": {
+            "description": "Error in fetching Order Details."
+          }
+        }
+      }
+    },
+    "/cookie-maker/order/list": {
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Order List",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched orders."
+          },
+          "400": {
+            "description": "Error in fetching previous orders."
+          }
+        }
+      }
+    },
+    "/cookie-maker/orders-summary": {
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Orders Summary",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched orders."
+          },
+          "400": {
+            "description": "Error in fetching previous orders."
+          }
+        }
+      }
+    },
+    "/cookie-maker/order/list?status={status}": {
+      "get": {
+        "tags": ["COOKIE_MAKER"],
+        "summary": "Order List with Order Status",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "status",
+            "required": true,
+            "description": "Pass Order Status in String",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched orders."
+          },
+          "400": {
+            "description": "Error in fetching previous orders."
+          }
+        }
+      }
+    },
+    "/user/address": {
+      "post": {
+        "tags": ["COOKIEMONSTER_ADDRESS"],
+        "summary": "Adding CookieMonster Address",
+        "requestBody": {
+          "description": "Address Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/COOKIEMONSTER_ADDRESS"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully saved your Address!",
+            "schema": {
+              "$ref": "#/definitions/COOKIEMONSTER_ADDRESS"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving Address."
+          }
+        }
+      },
+      "get": {
+        "tags": ["COOKIEMONSTER_ADDRESS"],
+        "summary": "Fetching Cookie Monster Address",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Cookie Monster Address.",
+            "schema": {
+              "$ref": "#/definitions/COOKIEMONSTER_ADDRESS"
+            }
+          },
+          "400": {
+            "description": "Error in fetching Cookie Monster Address."
+          }
+        }
+      }
+    },
+    "/user/current/address": {
+      "post": {
+        "tags": ["COOKIEMONSTER_ADDRESS"],
+        "summary": "Adding CookieMonster Current Address",
+        "requestBody": {
+          "description": "Address Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/COOKIEMONSTER_CURRENT_ADDRESS"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully saved your Current Address!",
+            "schema": {
+              "$ref": "#/definitions/COOKIEMONSTER_ADDRESS"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving Address."
+          }
+        }
+      }
+    },
+    "/user/address/{id}": {
+      "put": {
+        "summary": "Update Cookie Monster Address",
+        "tags": ["COOKIEMONSTER_ADDRESS"],
+        "requestBody": {
+          "description": "Restaurant Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/COOKIEMONSTER_ADDRESS"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Address Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated cookie Monster Address.",
+            "schema": {
+              "$ref": "#/definitions/COOKIEMONSTER_ADDRESS"
+            }
+          },
+          "400": {
+            "description": "Failed to update cookie montser address"
+          },
+          "404": {
+            "description": "Failed. Addess not found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Address of Cookie Monster",
+        "tags": ["COOKIEMONSTER_ADDRESS"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Cookie Monster Address Id.",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted Cookie Monster Address Id.",
+            "schema": {
+              "$ref": "#/definitions/COOKIEMONSTER_ADDRESS"
+            }
+          },
+          "400": {
+            "description": "Failed to Delete Cookie Monster Id"
+          },
+          "404": {
+            "description": "Failed. Address Not found"
+          }
+        }
+      }
+    },
+    "/home-banner": {
+      "post": {
+        "tags": ["HOMEPAGE_BANNER"],
+        "summary": "Adding HomePage Banner",
+        "requestBody": {
+          "description": "HomePage Banner Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/HOMEPAGE_BANNER"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully saved HomePage Banner!",
+            "schema": {
+              "$ref": "#/definitions/HOMEPAGE_BANNER"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving HomePage Banner."
+          }
+        }
+      },
+      "get": {
+        "tags": ["HOMEPAGE_BANNER"],
+        "summary": "Fetching Food Type",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully HomePage Banner data.",
+            "schema": {
+              "$ref": "#/definitions/HOMEPAGE_BANNER"
+            }
+          },
+          "400": {
+            "description": "Error in fetching HomePage Banner."
+          }
+        }
+      }
+    },
+    "/home-banner/{id}": {
+      "delete": {
+        "summary": "Delete HomePage Banner",
+        "tags": ["HOMEPAGE_BANNER"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "HomePage Banner Id",
+            "schema": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted HomePage Banner.",
+            "schema": {
+              "$ref": "#/definitions/HOMEPAGE_BANNER"
+            }
+          },
+          "400": {
+            "description": "Failed to Delete HomePage Banner."
+          },
+          "404": {
+            "description": "Failed. HomePage Banner Id not found."
+          }
+        }
+      }
+    },
+    "/search/sorting": {
+      "post": {
+        "tags": ["SEARCH"],
+        "summary": "Adding Search Sorting Data",
+        "requestBody": {
+          "description": "Search Sorting Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/SEARCH"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Your Search Sorting Type successfully saved!",
+            "schema": {
+              "$ref": "#/definitions/SEARCH"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving Search Sorting Type."
+          }
+        }
+      },
+      "get": {
+        "tags": ["SEARCH"],
+        "summary": "Search Sorting Type",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Search Sorting data.",
+            "schema": {
+              "$ref": "#/definitions/SEARCH"
+            }
+          },
+          "400": {
+            "description": "Error in fetching Search Sorting Type"
+          }
+        }
+      }
+    },
+    "/search/filter": {
+      "post": {
+        "tags": ["SEARCH"],
+        "summary": "Search Filters Type",
+        "requestBody": {
+          "description": "Search Filters Payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/SEARCH"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Your Search Filters Type successfully saved!",
+            "schema": {
+              "$ref": "#/definitions/SEARCH"
+            }
+          },
+          "400": {
+            "description": "There is some error while saving Search Filters Type."
+          }
+        }
+      },
+      "get": {
+        "tags": ["SEARCH"],
+        "summary": "Fetching Search Filters Type",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "You have successfully fetched Search Filters data.",
+            "schema": {
+              "$ref": "#/definitions/SEARCH"
+            }
+          },
+          "400": {
+            "description": "Error in fetching Search Filters Type"
+          }
+        }
+      }
+    },
+    "/upload/file": {
+      "post": {
+        "tags": ["FILE_UPLOAD"],
+        "summary": "Uploading files to AWS S3 Bucket using singed URL.",
+        "requestBody": {
+          "description": "We have two types for field: uploadType. If you provide LOGO, your images will be saved in logo directory, for BANNER: images will go on banner directory.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/FILE_UPLOAD"
+              }
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Signed URL created successfully.",
+            "schema": {
+              "$ref": "#/definitions/FILE_UPLOAD"
+            }
+          },
+          "400": {
+            "description": "Please try again with correct data."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "OTP_SEND": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "mobileNumber": {
+              "type": "number",
+              "example": 9033528947
+            },
+            "countryCode": {
+              "type": "string",
+              "example": "+91"
+            }
+          }
+        }
+      }
+    },
+    "OTP_VERIFY": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "mobileNumber": {
+              "type": "number",
+              "example": 9033528947
+            },
+            "otp": {
+              "type": "number",
+              "example": "4785"
+            },
+            "userId": {
+              "type": "string",
+              "example": "610a7d8f0a4d221c40e7d849"
+            }
+          }
+        }
+      }
+    },
+    "OTP_RESEND": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "mobileNumber": {
+              "type": "number",
+              "example": 9033528947
+            },
+            "userId": {
+              "type": "string",
+              "example": "610a7d8f0a4d221c40e7d849"
+            }
+          }
+        }
+      }
+    },
+    "COOKIE_MAKER_SIGNUP": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "Test"
+            },
+            "email": {
+              "type": "string",
+              "example": "test@gmail.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "test@123"
+            }
+          }
+        }
+      }
+    },
+    "COOKIE_MAKER_SIGNIN": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "example": "test@gmail.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "test@123"
+            }
+          }
+        }
+      }
+    },
+    "USER_SIGNUP": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string",
+              "example": "Test"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "Test"
+            },
+            "email": {
+              "type": "string",
+              "example": "test@gmail.com"
+            },
+            "referralCode": {
+              "type": "string",
+              "example": "AFY25Q"
+            },
+            "userId": {
+              "type": "string",
+              "example": "610a7d8f0a4d221c40e7d849"
+            }
+          }
+        }
+      }
+    },
+    "COOKIE_MAKER_CHANGE_PASSWORD": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "currentPassword": {
+              "type": "string",
+              "example": "test@123"
+            },
+            "newPassword": {
+              "type": "string",
+              "example": "newtest@123"
+            },
+            "repeatNewPassword": {
+              "type": "string",
+              "example": "newtest@123"
+            }
+          }
+        }
+      }
+    },
+    "MEAL_TYPE": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "mealType": {
+              "type": "string",
+              "example": "Brunch"
+            }
+          }
+        }
+      }
+    },
+    "FOOD_TYPE": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "foodType": {
+              "type": "string",
+              "example": "Brunch"
+            }
+          }
+        }
+      }
+    },
+    "CONTACT_US": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "test"
+            },
+            "phoneNumber": {
+              "type": "number",
+              "example": "1234567890"
+            },
+            "email": {
+              "type": "string",
+              "example": "test@gmail.com"
+            },
+            "message": {
+              "type": "string",
+              "example": "This is test message"
+            }
+          }
+        }
+      }
+    },
+    "MENU_CATEGORY": {
+      "type": "object",
+      "properties": {
+          "payload": {
+              "type": "object",
+              "properties": {
+                  "categoryName": {
+                      "type": "string",
+                      "example": "Most Selling"
+                  }
+              }
+          }
+      }
+    },
+    "MENU_ITEM": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "Tripple Whopper"
+            },
+            "calories": {
+              "type": "number",
+              "example": 250
+            },
+            "description": {
+              "type": "string",
+              "example": "A Triple Whopper at Burger King contains 170 milligrams of cholesterol, along with 1,160 calories and 75 grams of fat."
+            },
+            "amount": {
+              "type": "number",
+              "example": 5.43
+            },
+            "image": {
+              "type": "string",
+              "example": "https://takein.s3.ap-southeast-1.amazonaws.com//foodimage/00977b08-336c-424e-8c25-d366cad470f7.png"
+            },
+            "itemDetails": {
+              "type": "object",
+              "properties": {
+                "choices": {
+                  "type": ["string"],
+                  "example": ["Sweet & Sour Sauce", "Oyster Sauce"]
+                },
+                "extras": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ITEM"
+                  },
+                  "example": [
+                    {
+                      "name": "Mushroom",
+                      "calories": 15,
+                      "amount": 20
+                    },
+                    {
+                      "name": "Vegetables",
+                      "calories": 20,
+                      "amount": 25
+                    },
+                    {
+                      "name": "Ketchup",
+                      "calories": 30,
+                      "amount": 30
+                    }
+                  ]
+                }
+              }
+            },
+            "menuCategoryId": {
+              "type": "string",
+              "example": "6121f15496e2dc0018a12acf"
+            }
+          }
+        }
+      }
+    },
+    "ITEM": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "calories": {
+          "type": "number"
+        },
+        "amount": {
+          "type":"number"
+        }
+      }
+    },
+    "RESTAURANT": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "Pizza hut"
+            },
+            "logo": {
+              "type": "string",
+              "example": "https://takein.s3.ap-southeast-1.amazonaws.com/logo/5ad5a33a-3d66-4d6d-9087-21267e9042b4.png"
+            },
+            "bannerImage": {
+              "type": ["string"],
+              "example": ["https://takein.s3.ap-southeast-1.amazonaws.com/banner/562dbb98-999a-4e5b-8df6-64f4be2ac59c.png", "https://takein.s3.ap-southeast-1.amazonaws.com/banner/562dbb98-999a-4e5b-8df6-64f4be2ac59c.png"]
+            },
+            "phoneNumber": {
+              "type": "number",
+              "example": 987456123
+            },
+            "minOrderValue": {
+              "type": "number",
+              "example": 20
+            },
+            "maxOrderValue": {
+              "type": "number",
+              "example": 50
+            },
+            "openingTime": {
+              "type": "string",
+              "example": "09:00 AM"
+            },
+            "closingTime": {
+              "type": "string",
+              "example": "10:00 PM"
+            },
+            "deliveryTime": {
+              "type": "string",
+              "example": "10 Min"
+            },
+            "lastOrderTime": {
+              "type": "string",
+              "example": "09:30 PM"
+            },
+            "deliveryType": {
+              "type": ["string"],
+              "example": ["Take-In", "Dine-in"]
+            },
+            "foodType": {
+              "type": ["string"],
+              "example": ["Pizza", "burger", "Bread"]
+            },
+            "address": {
+              "type": "object",
+              "properties": {
+                "country": {
+                  "type": "string",
+                  "example": "UAE"
+                },
+                "state": {
+                  "type": "string",
+                  "example": "Burj Khalifa"
+                },
+                "city": {
+                  "type": "string",
+                  "example": "Burj"
+                },
+                "postalCode": {
+                  "type": "number",
+                  "example": 23221
+                },
+                "street": {
+                  "type": "string",
+                  "example": "Khalifa"
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "Point"
+                    },
+                    "coordinates": {
+                      "type": "array",
+                      "example": [23.8426943813556, 61.4644750214197]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "RESTAURANT_OFFERS": {
+      "type": "object",
+      "properties": {
+        "offer": {
+          "type": "object",
+          "properties": {
+            "offerType": {
+              "type": "string",
+              "example": "Banner"
+            },
+            "discount": {
+              "type": "number",
+              "example": 5
+            },
+            "startDate": {
+              "type": "string",
+              "example": "23-05-2010"
+            },
+            "endDate": {
+              "type": "string",
+              "example": "23-06-2010"
+            },
+            "description": {
+              "type": "string",
+              "example": "This is test description texxt for offer."
+            },
+            "isActive": {
+              "type": "boolean",
+              "example": true
+            },
+            "bannerImage": {
+              "type": "string",
+              "example": "https://takein.s3.ap-southeast-1.amazonaws.com/banner/562dbb98-999a-4e5b-8df6-64f4be2ac59c.png"
+            }
+          }
+        }
+      }
+    },
+    "FILE_UPLOAD": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "uploadType": {
+              "type": "string",
+              "example": "LOGO"
+            },
+            "extension": {
+              "type": "string",
+              "example": "png"
+            },
+            "contentType": {
+              "type": "string",
+              "example": "image/png"
+            }
+          }
+        }
+      }
+    },
+    "REVIEW":{
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "restaurantId": {
+              "type": "string",
+              "example": "61764454bcaca828a87b6246"
+            },
+            "rating": {
+              "type": "number",
+              "example": 5
+            },
+            "reviewComment": {
+              "type": "string",
+              "example": "best service"
+            }
+          }
+        }
+      }
+    },
+    "CART": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "quantity": {
+              "type": "number",
+              "example": 3
+            },
+            "choices": {
+              "type": "string",
+              "example": ["Sweet & Sour Sauce", "Chilli Sauce"]
+            },
+            "extras": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ITEM"
+              },
+              "example": [
+                {
+                  "name": "Mushroom",
+                  "calories": 45,
+                  "amount": 12
+                },
+                {
+                  "name": "Vegetables",
+                  "calories": 12,
+                  "amount": 20
+                }
+              ]
+            },
+            "additionalComments": {
+              "type": "string",
+              "example": "Nothing"
+            },
+            "menuItemId": {
+              "type": "string",
+              "example": "6124a8bae6281400181a5407"
+            }
+          }
+        }
+      }
+    },
+    "ORDER_AGAIN": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "orderId": {
+              "type": "string",
+              "example": "6177ee49b279012dac6d23a5"
+            }
+          }
+        }
+      }
+    },
+    "ORDER": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "deliveryType": {
+              "type": "string",
+              "example": "Delivery"
+            },
+            "payWith": {
+              "type": "string",
+              "example": "Cash"
+            }
+          }
+        }
+      }
+    },
+    "CART_UPDATE": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "quantity": {
+              "type": "number",
+              "example": 3
+            }
+          }
+        }
+      }
+    },
+   
+    "FAVOURITE_RESTAURANT": {
+      "type": "object",
+      "properties": {
+          "payload": {
+              "type": "object",
+              "properties": {
+                  "restaurantId": {
+                      "type": "string",
+                      "example": "6119fe5c95296b0018dbdcd8"
+                  }
+              }
+          }
+      }
+    },
+    "id": {
+      "properties": {
+        "uuid": {
+          "type": "string"
+        }
+      }
+    },
+    "COOKIEMONSTER_ADDRESS": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "object",
+              "required": [
+                "nickName",
+                "addressLine1",
+                "addressLine2",
+                "phoneNumber"
+              ],
+              "properties": {
+                "nickName": {
+                  "type": "string",
+                  "example": "Home"
+                },
+                "addressLine1": {
+                  "type": "string",
+                  "example": "Burj Khalifa"
+                },
+                "addressLine2": {
+                  "type": "string",
+                  "example": "Dubai"
+                },
+                "phoneNumber": {
+                  "type": "number",
+                  "example": 9033528974
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "coordinates": {
+                      "type": "double",
+                      "example": [23.8426943813556, 61.4644750214197]
+                    }
+                  }
+                },
+                "isDefault": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "COOKIEMONSTER_CURRENT_ADDRESS": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "object",
+          "properties": {
+            "coordinates": {
+              "type": "double",
+              "example": [23.8426943813556, 61.4644750214197]
+            }
+          }
+        }
+      }
+    },
+    "HOMEPAGE_BANNER": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "example": "Donut Worry!"
+            },
+            "description": {
+              "type": "string",
+              "example": "We are here with the best deserts in town"
+            },
+            "backgroundImage": {
+              "type": "string",
+              "example": "https://takein.s3.ap-southeast-1.amazonaws.com/extra/194fe3a4-73d8-4a56-9463-61ae057d6e06.jpeg"
+            },
+            "keyword": {
+              "type": "string",
+              "example": "donut"
+            }
+          }
+        }
+      }
+    },
+    "SEARCH": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "example": "Recommended"
+            }
+          }
+        }
+      }
+    },
+    "menuCategoryId": {
+      "properties": {
+        "uuid": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+.env
+.env-examples
+docker-compose.yml
+README.md
+node_modules
+devops/services
+lambda

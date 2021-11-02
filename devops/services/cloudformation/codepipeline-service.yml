@@ -1,0 +1,363 @@
+Parameters:
+######## Codepipeline parameters ########
+  Provider:
+    Type: String
+    Default: GitHub
+
+  ProviderRepo:
+    Type: String
+    Default: keylime-report-server
+
+  ProviderBranch:
+    Type: String
+    Default: production-devops
+
+  ProviderToken:
+    Type: String
+    NoEcho: true
+
+  Owner:
+    Type: String
+    Default: ezops-br
+
+######## Cluster parameters ########
+  ClusterName:
+    Type: String
+    Default: takein
+
+  Stage:
+    Type: String
+    AllowedValues:
+      - dev
+      - staging
+      - qa
+      - prod
+    Default: prod
+
+  TypeProject:
+    Type: String
+    Default: itcan
+
+######## elb parameters ########
+  DefaultAcmCertificateArn:
+    Type: String
+    Default: arn:aws:acm:us-east-1:030927526309:certificate/2a9ce927-db69-4773-84b3-b728d04d6702
+
+  HasHTTPS:
+    Type: String
+    Default: false
+
+  SiteTgPriority:
+    Type: String
+    Default: 2
+  Host:
+    Type: String
+######## service parameters ########
+  ContainerVirtualCPUs:
+    Type: Number
+    Default: 256
+
+  ContainerMemoryMin:
+    Type: Number
+    Default: 512
+
+  ContainerMemoryMax:
+    Type: String
+    Default: LIMITLESS
+
+  AlbHealthCheckStartPeriod:
+    Type: String
+    Default: 5
+
+  Port:
+    Type: String
+    Default: 3000
+
+  EcsTasksNumber:
+    Type: String
+    Default: 2
+
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: Codepipeline General Params
+      Parameters:
+        - Owner
+        - Provider
+        - ProviderRepo
+        - ProviderBranch
+        - ProviderToken
+
+    - Label:
+        default: Cluster General Params
+      Parameters:
+        - ClusterName
+        - Stage
+
+
+Resources:
+  Repository:
+    Type: AWS::ECR::Repository
+    DeletionPolicy: Retain
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      RepositoryName: !Sub ${ClusterName}-${Stage}-${TypeProject}
+
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub cb-${AWS::StackName}
+      Path: /
+      AssumeRolePolicyDocument: |
+        {
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": [ "codebuild.amazonaws.com" ]},
+            "Action": [ "sts:AssumeRole" ]
+          }]
+        }
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - logs:*
+                  - cloudformation:*
+                  - ecs:*
+                  - ec2:*
+                  - ecr:*
+                  - s3:*
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub cp-${AWS::StackName}
+      Path: /
+      AssumeRolePolicyDocument: |
+        {
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": [ "codepipeline.amazonaws.com" ]},
+            "Action": [ "sts:AssumeRole" ]
+          }]
+        }
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+                  - cloudformation:*
+                  - cloudwatch:*
+                  - events:*
+                  - iam:PassRole
+                  - secretsmanager:*
+                  - ec2:*
+                  - s3:*
+                  - ssm:*
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Ref AWS::StackName
+      ServiceRole: !Ref CodeBuildServiceRole
+      Artifacts:
+        Location: !Sub ${ClusterName}-${Stage}-artifact-bucket
+        Type: "S3"
+      Source:
+        Location:
+          Fn::Join:
+            - '/'
+            - - !Sub ${ClusterName}-${Stage}-artifact-bucket
+              - source.zip
+        Type: "S3"
+        BuildSpec: |
+          version: 0.2
+          env:
+            exported-variables:
+              - IMAGE_TAG
+          phases:
+            install:
+              commands:
+                - echo Logging in to Amazon ECR... #
+                - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+            pre_build:
+              commands:
+                - TAG="$(date +%Y-%m-%d-%H%M%S)"
+                - IMAGE_TAG=${TAG:=latest}
+            build:
+              commands:
+                - docker build -t $REPOSITORY_NAME --build-arg DOCKER_REPORT=${DOCKER_REPORT} .
+            post_build:
+              commands:
+                - docker tag $REPOSITORY_NAME:latest $REPOSITORY_URI/$REPOSITORY_NAME:$IMAGE_TAG
+                - docker push $REPOSITORY_URI/$REPOSITORY_NAME:$IMAGE_TAG
+      Environment:
+        ComputeType: "BUILD_GENERAL1_LARGE"
+        Image: "aws/codebuild/standard:5.0"
+        Type: "LINUX_CONTAINER"
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - Name: AWS_DEFAULT_REGION
+            Value: !Ref AWS::Region
+          - Name: REPOSITORY_URI
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com
+          - Name: REPOSITORY_NAME
+            Value: !Ref Repository
+          - Name: STACK_NAME
+            Value: !Sub ${ClusterName}-${Stage}-${TypeProject}
+          - Name: DOCKER_REPORT
+            Value: public.ecr.aws/bitnami/node:15
+
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub ${ClusterName}-${Stage}-${TypeProject}-service
+      RoleArn: !GetAtt CodePipelineServiceRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Sub ${ClusterName}-${Stage}-artifact-bucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: App
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: '1'
+                Provider: !Ref Provider
+              Configuration:
+                Owner: !Ref Owner
+                Repo: !Ref ProviderRepo
+                Branch: !Ref ProviderBranch
+                OAuthToken: !Ref ProviderToken
+              OutputArtifacts:
+                - Name: App
+              RunOrder: 1
+
+        - Name: Build
+          Actions:
+            - Name: Build
+              Namespace: BuildVariables
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: '1'
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+                PrimarySource: App
+              InputArtifacts:
+                - Name: App
+              OutputArtifacts:
+                - Name: BuildOutput
+              RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: CreateELBChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_REPLACE
+                StackName: !Sub ${ClusterName}-${Stage}-${TypeProject}-service-elb
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: App::devops/services/cloudformation/service-elb.yml
+                RoleArn:
+                  'Fn::ImportValue': !Sub ${ClusterName}CloudFormationExecutionRoleArn
+                ParameterOverrides: !Sub |
+                  {
+                    "ClusterName": "${ClusterName}",
+                    "Stage": "${Stage}",
+                    "TypeProject": "${TypeProject}",
+                    "SiteName": "${Host}",
+                    "DefaultAcmCertificateArn": "${DefaultAcmCertificateArn}",
+                    "HasHTTPS": "${HasHTTPS}",
+                    "SiteTgPriority": "${SiteTgPriority}"
+                  }
+              RunOrder: 1
+              InputArtifacts:
+                - Name: App
+
+            - Name: ExecuteELBChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: !Sub ${ClusterName}-${Stage}-${TypeProject}-service-elb
+                RoleArn:
+                  'Fn::ImportValue': !Sub ${ClusterName}CloudFormationExecutionRoleArn
+              RunOrder: 2
+
+            - Name: CreateECSChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_REPLACE
+                StackName: !Sub ${ClusterName}-${Stage}-${TypeProject}-service-ecs
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: App::devops/services/cloudformation/service-ecs.yml
+                RoleArn:
+                  'Fn::ImportValue': !Sub ${ClusterName}CloudFormationExecutionRoleArn
+                ParameterOverrides: !Sub |
+                  {
+                    "ClusterName": "${ClusterName}",
+                    "Stage": "${Stage}",
+                    "TypeProject": "${TypeProject}",
+                    "ContainerPort": "${Port}",
+                    "ContainerVirtualCPUs": "${ContainerVirtualCPUs}",
+                    "ContainerMemoryMin": "${ContainerMemoryMin}",
+                    "ContainerMemoryMax": "${ContainerMemoryMax}",
+                    "AlbHealthCheckStartPeriod": "${AlbHealthCheckStartPeriod}",
+                    "BuildNumber": "#{BuildVariables.IMAGE_TAG}",
+                    "EcsTasksNumber": "${EcsTasksNumber}"
+                  }
+              RunOrder: 1
+              InputArtifacts:
+                - Name: App
+                - Name: BuildOutput
+
+            - Name: ExecuteECSChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: !Sub ${ClusterName}-${Stage}-${TypeProject}-service-ecs
+                RoleArn:
+                  'Fn::ImportValue': !Sub ${ClusterName}CloudFormationExecutionRoleArn
+              RunOrder: 2
+
+ 
+Outputs:
+  PipelineUrl:
+    Value: !Sub https://console.aws.amazon.com/codepipeline/home?region=${AWS::Region}#/view/${Pipeline}
+
+  CodePipeline:
+    Value: !Ref Pipeline
+    Export:
+      Name: !Sub ${ClusterName}-${Stage}-CodePipeline

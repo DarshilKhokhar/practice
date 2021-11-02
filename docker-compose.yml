@@ -1,0 +1,44 @@
+version: '3'
+services:
+    app:
+        build: .
+        depends_on: 
+            - mongodb
+        restart: always
+        networks:
+            - backend
+        environment:
+            DB_USER: ${DB_USER}
+            DB_PASS: ${DB_PASS}
+            DB_HOST: mongo
+            URL_DB: mongodb://${DB_USER}:${DB_PASS}@mongodb:27017/
+
+    nginx_proxy:
+        image: nginx
+        restart: always
+        ports:
+            - 80:80
+        networks:
+            - backend
+            - frontend
+        volumes:
+            - ./.docker/nginx.conf:/etc/nginx/nginx.conf
+
+    mongodb:
+        image: mongo
+        restart: always
+        networks:
+            - backend
+            - frontend
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+            MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
+        ports:
+            - 27017:27017
+
+
+networks:
+    frontend:
+        internal: false
+    backend:
+        internal: true

@@ -1,0 +1,43 @@
+export const messages: {[key: string]: any} = {
+  success: {
+    'OTP_SENT': 'Otp send successfully!',
+    'OTP_VERIFIED': 'Otp verified successfully.',
+    'SIGNUP_SUCCESS': 'You have successfully completed sign up!',
+    'MEAL_TYPE_SAVED': 'Your Meal Type successfully saved!',
+    'GET_MEAL_TYPE': 'You have successfully fetched Meal Typa data.',
+    'RESTAURANT_DATA_SAVED': 'Your resturant data successfuly saved!',
+    'GET_RESTAURANT': 'You have successfully fetched Restaurant data.',
+    'GET_FOOD_TYPE': 'You have successfully fetched food Typa data.',
+    'FOOD_TYPE_SAVED': 'Your food Type successfully saved!',
+    'ORDER_SUCCESSFULLY_PLACED!': 'Order Successfully Placed!'
+  },
+  error: {
+    'OTP_FAILURE': 'There is some error while sending the otp.',
+    'USER_ALREADY_EXISTS': 'This mobile number is already registered with us.',
+    'USER_ALREADY_EXISTS_WITH_EMAIL': 'The user is already registered with us with same Email Id',
+    'USER_NOT_FOUND': 'User not found!',
+    'OTP_EXPIRED': 'The otp which you are entering has already expired!',
+    'OTP_DID_NOT_MATCH': 'You have entered the wrong otp value. Please check again!',
+    'OTP_VERIFY_ERROR': 'There is some error while verifying the otp.',
+    'OTP_ALREADY_VERIFIED': 'Your mobile number has already been verified.',
+    'SIGNUP_ERROR': 'Please provide data for all the required field to proceed sign up.',
+    'MOBILE_NOT_VERIFIED': 'Your mobile number is not verified.',
+    'ALREADY_SIGN_UP': 'User has already completed sign up process. Please try to do sign in.',
+    'MEAL_TYPE_ALREADY_EXISTS': 'Entered Meal Type already Exists.',
+    'MEAL_TYPE_ADD_FAILURE': 'There is some error while saving Meal Type Preference.',
+    'GET_MEAL_TYPE_ERROR': 'There is error while fetching Meal Type.',
+    'RESTAURANT_ADD_FAILURE': 'There is some error while saving restaurant data',
+    'RESTAURANT_ALREADY_ONBOARDED': 'Resturant is already registered with provided address. Please try again with different address.',
+    'GET_RESTAURANT_ERROR': 'There is error while fetching Restaurant Data.',
+    'FOOD_TYPE_ALREADY_EXISTS': 'Entered Food Type already Exists.',
+    'FOOD_TYPE_ADD_FAILURE': 'There is some error while saving food Type.',
+    'GET_FOOD_TYPE_ERROR': 'There is error while fetching food Type.',
+    'RESTAURANT_ALREADY_FAVORITED': 'Restaurant Already Favoutited by you! Please check your favoutite List.',
+    'ORDER_NOT_ALLOWED': 'Cross Restaurant Food Items are not allowed! Please add food items from single restaurant to make successful order.',
+    'AUTH-001': 'Authentication token is missing or Invalid token.',
+    'AUTH-002': 'Authentication token is missing or Invalid token.',
+    'AUTH-003': 'User does not have any associated Restaurant. Please add restaurant first and try again!',
+    'ORDER_UNSUCCESSFUL': 'Something went wrong! Please try again :)',
+    'RESTAURANT_ALREADY_ADDED': "You have already added restaurant. You can only add one restaurant."
+  }
+}

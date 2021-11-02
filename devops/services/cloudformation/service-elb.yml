@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sets Up Service Elb
+Parameters:
+  ClusterName:
+    Type: String
+
+  Stage:
+    Type: String
+
+  SiteName:
+    Type: String
+
+  DefaultAcmCertificateArn:
+    Type: String
+    Default: arn
+
+  # ContainerNetworkMode:
+  #   Type: String
+  #   Default: bridge
+
+  ContainerPort:
+    Type: String
+    Default: 80
+
+  AlbHealthCheckInterval:
+    Type: String
+    Default: 20
+
+  AlbHealthCheckPath:
+    Type: String
+    Default: /
+
+  AlbHealthCheckTimeout:
+    Type: String
+    Default: 10
+
+  AlbHealthCheckHealthyThreshold:
+    Type: String
+    Default: 2
+
+  AlbHealthCheckUnhealthyThreshold:
+    Type: String
+    Default: 2
+
+  HasHTTPS:
+    Type: String
+
+  SiteTgPriority:
+    Type: String
+  
+  TypeProject:
+    Type: String
+    Default: itcan
+Conditions:
+  hasSSL: !Equals [!Ref HasHTTPS, "true"]
+
+Resources:
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub ${ClusterName}-${TypeProject}-${Stage}-web-tg
+      VpcId:
+        'Fn::ImportValue': !Sub ${ClusterName}-${Stage}-VPC
+      Protocol: HTTP
+      TargetType: 'instance'
+      Port: !Ref ContainerPort
+      Matcher:
+        HttpCode: '200,302'
+      HealthCheckIntervalSeconds: !Ref AlbHealthCheckInterval
+      HealthCheckPath: !Ref AlbHealthCheckPath
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: !Ref AlbHealthCheckTimeout
+      HealthyThresholdCount: !Ref AlbHealthCheckHealthyThreshold
+      UnhealthyThresholdCount: !Ref AlbHealthCheckUnhealthyThreshold
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: '30'
+        - Key: stickiness.enabled
+          Value: 'true'
+
+  ListenerCertificate:
+    Type: AWS::ElasticLoadBalancingV2::ListenerCertificate
+    Condition: hasSSL
+    Properties:
+      Certificates:
+        - DefaultAcmCertificateArn: !Ref DefaultAcmCertificateArn
+      ListenerArn:
+        'Fn::ImportValue': !Sub ${ClusterName}-${Stage}-ApplicationAlbListenerForHttps
+
+  SiteNameListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn:
+        !If
+          - hasSSL
+          - 'Fn::ImportValue': !Sub ${ClusterName}-${Stage}-ApplicationAlbListenerForHttps
+          - 'Fn::ImportValue': !Sub ${ClusterName}-${Stage}-ApplicationAlbListenerForHttp
+      Priority: !Ref SiteTgPriority
+      Conditions:
+        - Field: host-header
+          Values:
+            - !Ref SiteName
+      Actions:
+        - TargetGroupArn: !Ref TargetGroup
+          Type: forward
+
+Outputs:
+  TargetGroup:
+    Value: !Ref TargetGroup
+    Export:
+      Name: !Sub ${ClusterName}-${TypeProject}-${Stage}-web-tg
