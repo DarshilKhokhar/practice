@@ -255,68 +255,68 @@ export default class CartController {
   }
 
   // To Order Again.
-  // @Post("/order-again", { transformRequest: true })
-  // @UseBefore(CookieUserValidator)
-  // async AddOrderAgain(
-  //   @Req() req: IExtendedRequest,
-  //   @Res() res: IExtendedResponse,
-  //   @Body() body: orderAgainPayload
-  // ) {
-  //   try {
-  //     const { orderId } = body.payload;
-  //     const cookieMonsterId = req.context?.user._id,
-  //       orderAgain = await this._orderService.findOne(
-  //         { _id: mongoose.Types.ObjectId(orderId) },
-  //         {}
-  //       );
-  //     if (!orderAgain)
-  //       return res.formatter.error({}, false, "PREVIOUS_ORDER_NOT_FOUND!");
-  //     let name,
-  //       amount,
-  //       image,
-  //       restaurantId,
-  //       menuCategoryId,
-  //       quantity,
-  //       choices,
-  //       additionalComments,
-  //       menuItemId,
-  //       extras,
-  //       menuItem;
-  //     for (let i = 0; i < orderAgain.cartItems.length; i++) {
-  //       quantity = orderAgain.cartItems[i].quantity;
-  //       choices = orderAgain.cartItems[i].choices;
-  //       additionalComments = orderAgain.cartItems[i].additionalComments;
-  //       menuItemId = orderAgain.cartItems[i].menuItemId;
-  //       extras = orderAgain.cartItems[i].extras;
-  //       menuItem = await this._menuItemService.findOne(
-  //         { _id: mongoose.Types.ObjectId(orderAgain.cartItems[i].menuItemId) },
-  //         {}
-  //       );
-  //       name = menuItem?.name;
-  //       amount = menuItem?.amount;
-  //       image = menuItem?.image;
-  //       restaurantId = menuItem?.restaurantId;
-  //       menuCategoryId = menuItem?.menuCategoryId;
-  //       const dataTosave = {
-  //         name,
-  //         amount,
-  //         image,
-  //         menuCategoryId,
-  //         quantity,
-  //         choices,
-  //         extras,
-  //         additionalComments,
-  //         restaurantId,
-  //         menuItemId,
-  //         cookieMonsterId,
-  //       };
-  //       await this._cartService.save(dataTosave);
-  //     }
+  @Post("/order-again", { transformRequest: true })
+  @UseBefore(CookieUserValidator)
+  async AddOrderAgain(
+    @Req() req: IExtendedRequest,
+    @Res() res: IExtendedResponse,
+    @Body() body: orderAgainPayload
+  ) {
+    try {
+      const { orderId } = body.payload;
+      const cookieMonsterId = req.context?.user._id,
+        orderAgain = await this._orderService.findOne(
+          { _id: mongoose.Types.ObjectId(orderId) },
+          {}
+        );
+      if (!orderAgain)
+        return res.formatter.error({}, false, "PREVIOUS_ORDER_NOT_FOUND!");
+      let name,
+        amount,
+        image,
+        restaurantId,
+        menuCategoryId,
+        quantity,
+        choices,
+        additionalComments,
+        menuItemId,
+        extras,
+        menuItem;
+      for (let i = 0; i < orderAgain.cartItems.length; i++) {
+        quantity = orderAgain.cartItems[i].quantity;
+        choices = orderAgain.cartItems[i].choices;
+        additionalComments = orderAgain.cartItems[i].additionalComments;
+        menuItemId = orderAgain.cartItems[i].menuItemId;
+        extras = orderAgain.cartItems[i].extras;
+        menuItem = await this._menuItemService.findOne(
+          { _id: mongoose.Types.ObjectId(orderAgain.cartItems[i].menuItemId) },
+          {}
+        );
+        name = menuItem?.name;
+        amount = menuItem?.amount;
+        image = menuItem?.image;
+        restaurantId = menuItem?.restaurantId;
+        menuCategoryId = menuItem?.menuCategoryId;
+        const dataTosave = {
+          name,
+          amount,
+          image,
+          menuCategoryId,
+          quantity,
+          choices,
+          extras,
+          additionalComments,
+          restaurantId,
+          menuItemId,
+          cookieMonsterId,
+        };
+        await this._cartService.save(dataTosave);
+      }
 
-  //     return res.formatter.ok({}, true, "MENU_ITEM_ADDED_TO_CART!");
-  //   } catch (err) {
-  //     return res.formatter.error({}, false, "ERROR!", err as Error);
-  //   }
-  // }
+      return res.formatter.ok({}, true, "MENU_ITEM_ADDED_TO_CART!");
+    } catch (err) {
+      return res.formatter.error({}, false, "ERROR!", err as Error);
+    }
+  }
 }
 
